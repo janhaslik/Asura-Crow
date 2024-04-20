@@ -3,3 +3,15 @@
 **/.DS_Store
 **/.vscode/
 **/.idea/
+
+/CMakeFiles/
+/CMakeScripts/
+/CMakeCache.txt
+/CMakeSettings.json
+/CMakeLists.txt.user
+*/CMakeFiles/
+*/CMakeScripts/
+*/CMakeCache.txt
+*/CMakeSettings.json
+*/CMakeLists.txt.user
+*/build/
