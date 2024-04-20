@@ -1,3 +1,0 @@
-/Users/janhaslik/Code/Asura Crow/indexer/build/CMakeFiles/Indexer.dir
-/Users/janhaslik/Code/Asura Crow/indexer/build/CMakeFiles/edit_cache.dir
-/Users/janhaslik/Code/Asura Crow/indexer/build/CMakeFiles/rebuild_cache.dir
