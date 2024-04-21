@@ -1,6 +1,5 @@
 package crawler
 
-import "C"
 import (
 	"bytes"
 	"encoding/json"
