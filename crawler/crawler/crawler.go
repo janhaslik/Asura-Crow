@@ -18,7 +18,6 @@ type document struct {
 }
 
 func Crawl(urls []string, numWorkers int) error {
-
 	if len(urls) == 0 {
 		return errors.New("no urls provided")
 	}
@@ -155,7 +154,7 @@ func fetch(url string) error {
 
 // removes all blacklisted characters, and turns the content into lowercase
 func CleanContent(content string) string {
-	blacklist := map[string]bool{"and": true, ":": true, ".": true, ",": true, "'": true, "<": true, ">": true, "!": true, "\"": true}
+	blacklist := map[string]bool{"and": true, ";": true, ":": true, ".": true, "{": true, "}": true, "[": true, "]": true, "\\": true, "%": true, "$": true, ",": true, "'": true, "<": true, ">": true, "!": true, "\"": true, "with": true, "or": true, "-	": true}
 
 	words := strings.Split(content, " ")
 	var cleaned []string
