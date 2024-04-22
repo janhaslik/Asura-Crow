@@ -3,13 +3,19 @@ package main
 import (
 	"fmt"
 	"web-crawler/crawler"
+	"web-crawler/data"
 )
 
 func main() {
-	urls := []string{"https://apple.com", "https://www.kapsch.net", "https://www.microsoft.com", "https://www.google.com", "https://www.amazon.de"}
+	conn, _ := data.Connect()
 
-	numWorkers := 1 //number of workers, prod: 1 for 10 urls, test: 1 for 1 url
-	err := crawler.Crawl(urls, numWorkers)
+	websiteUrls, err := conn.GetWebsiteUrls()
+	if err != nil {
+		return
+	}
+
+	numWorkers := 100 //number of workers, prod: 100, test: 1
+	err = crawler.Crawl(websiteUrls, numWorkers)
 	if err != nil {
 		fmt.Println("Error in main at crawler:", err)
 		return

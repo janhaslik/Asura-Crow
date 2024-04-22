@@ -3,6 +3,7 @@ package crawler
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"golang.org/x/net/html"
 	"io"
@@ -17,6 +18,10 @@ type document struct {
 }
 
 func Crawl(urls []string, numWorkers int) error {
+
+	if len(urls) == 0 {
+		return errors.New("no urls provided")
+	}
 	urlChan := make(chan string, len(urls))
 
 	//fill the channel
@@ -35,7 +40,7 @@ func Crawl(urls []string, numWorkers int) error {
 	}
 	errChan := make(chan crawlErr, numWorkers)
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 1; i <= numWorkers; i++ {
 		go func() {
 			defer wg.Done()
 			for url := range urlChan {
