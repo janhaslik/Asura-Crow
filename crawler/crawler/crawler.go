@@ -1,14 +1,15 @@
-package main
+package crawler
 
-import "C"
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"golang.org/x/net/html"
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 )
 
 type document struct {
@@ -16,17 +17,72 @@ type document struct {
 	Content string `json:"content"`
 }
 
-func crawl(url string) {
-	fetch(url)
+func Crawl(urls []string, numWorkers int) error {
+
+	if len(urls) == 0 {
+		return errors.New("no urls provided")
+	}
+	urlChan := make(chan string, len(urls))
+
+	//fill the channel
+	for _, url := range urls {
+		urlChan <- url
+	}
+	close(urlChan)
+
+	var wg sync.WaitGroup
+	wg.Add(numWorkers)
+
+	type crawlErr struct {
+		err    error
+		url    string
+		worker int
+	}
+	errChan := make(chan crawlErr, numWorkers)
+
+	for i := 1; i <= numWorkers; i++ {
+		go func() {
+			defer wg.Done()
+			for url := range urlChan {
+				err := fetch(url)
+
+				if err != nil {
+					errChan <- crawlErr{err, url, i}
+					return
+				} else {
+					fmt.Printf("Successfully Crawled %s and sent document to indexer server, channel worker: %d\n", url, i)
+				}
+			}
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
+
+	for channel := range errChan {
+		if channel.err != nil {
+			fmt.Printf("Error fetching url: %s, channel worker: %d, error: %s\n", channel.url, channel.worker, channel.err)
+			return channel.err
+		}
+	}
+
+	return nil
 }
 
-func fetch(url string) {
+func fetch(url string) error {
 	res, err := http.Get(url)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(res.Body)
 
 	tokenizer := html.NewTokenizer(res.Body)
 	content := ""
@@ -37,9 +93,9 @@ func fetch(url string) {
 
 		switch tokenType {
 		case html.ErrorToken:
-			content = extractStrings(content)
-			content = cleanContent(content)
-			fmt.Println(content)
+			content = ExtractStrings(content)
+			content = CleanContent(content)
+
 			// Create a document object to pass to the C function
 			doc := document{
 				Url:     url,
@@ -49,7 +105,7 @@ func fetch(url string) {
 			var docBytes, err = json.Marshal(doc)
 
 			if err != nil {
-				return
+				return err
 			}
 			req, err := http.NewRequest("POST", "http://localhost:7001/index", bytes.NewBuffer(docBytes))
 
@@ -60,7 +116,8 @@ func fetch(url string) {
 
 			res, err := client.Do(req)
 			if err != nil {
-				return
+				fmt.Errorf("Failed to request indexer server %s", err)
+				return err
 			}
 
 			defer func(Body io.ReadCloser) {
@@ -74,9 +131,9 @@ func fetch(url string) {
 			// check the response status code
 			if res.StatusCode != http.StatusOK {
 				fmt.Printf("Error: Status %s\n", res.Status)
-				return
+				return err
 			}
-			return
+			return nil
 
 		case html.StartTagToken, html.SelfClosingTagToken:
 			token := tokenizer.Token()
@@ -96,8 +153,9 @@ func fetch(url string) {
 	}
 }
 
-func cleanContent(content string) string {
-	blacklist := map[string]bool{"and": true, ":": true, ".": true, ",": true}
+// removes all blacklisted characters, and turns the content into lowercase
+func CleanContent(content string) string {
+	blacklist := map[string]bool{"and": true, ":": true, ".": true, ",": true, "'": true, "<": true, ">": true, "!": true, "\"": true}
 
 	words := strings.Split(content, " ")
 	var cleaned []string
@@ -118,7 +176,7 @@ func cleanContent(content string) string {
 }
 
 // extractStrings removes unnecessary whitespace characters from content
-func extractStrings(content string) string {
+func ExtractStrings(content string) string {
 	lines := strings.Split(content, "\n")
 	var result []string
 
