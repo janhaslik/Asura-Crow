@@ -24,12 +24,12 @@ namespace indexer {
             // calculate inverse document frequency (IDF)
             float idf=0.0f;
             if (this->index.find(term) != this->index.end()) {
-                idf = std::log(static_cast<float>(this->totalDocuments) / (this->index[term].size())); // IDF with Laplace smoothing
+                idf = std::log(static_cast<float>(this->totalDocuments) / (this->index[term].size())+1);
             } else {
                 idf = std::log(static_cast<float>(this->totalDocuments) / 1); // Default IDF for new term
             }            
 
-            IndexDocument indexDocument{ document->url, pair.second, tf, idf };
+            indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf };
             // Check if the term already exists in the index map
             if (this->index.find(term) != this->index.end()) {
                 bool found = false;
@@ -46,9 +46,11 @@ namespace indexer {
                 // if the url is not found for the term, add it to the index
                 if (!found) {
                     this->index[term].push_back(indexDocument);
+                    this->db.insertIndexDocument(indexDocument);
                 }
             } else {
                 this->index[term].push_back(indexDocument);
+                this->db.insertIndexDocument(indexDocument);
             }
         }
         this->totalDocuments++;
@@ -66,15 +68,16 @@ namespace indexer {
     void Indexer::printIndex(){
         for (const auto& entry : this->index) {
             const std::string& term = entry.first;
-            const std::vector<IndexDocument>& documents = entry.second;
+            const std::vector<indexer_db::IndexDocument>& documents = entry.second;
             ///if (term != "apple")continue;
             std::cout << "Term: " << term << std::endl;
 
-            for (const IndexDocument& doc : documents) {
+            for (const indexer_db::IndexDocument& doc : documents) {
                 std::cout << "  Document URL: " << doc.url << std::endl;
                 std::cout << "  Term count: " << doc.termCount << std::endl;
                 std::cout << "  TF: " << doc.tf << std::endl;
                 std::cout << "  IDF: " << doc.idf << std::endl;
+                std::cout << "  TF-IDF: " << doc.tf*doc.idf << std::endl;
             }
 
             std::cout << std::endl;

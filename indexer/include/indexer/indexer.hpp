@@ -1,26 +1,23 @@
 #ifndef INDEXER_HPP
 #define INDEXER_HPP
 #include <string>
+#include <vector>
+#include "db/db.hpp"
 
-namespace indexer{
+namespace indexer {
 // Define a struct for document
 struct Document {
     const std::string url;
     const std::string content;
 };
 
-struct IndexDocument{
-    const std::string url;
-    const int termCount;
-    const float tf;
-    float idf;
-};
 
 class Indexer
 {
 private:
+    indexer_db::indexer_db db;
     int totalDocuments;
-    std::unordered_map<std::string, std::vector<IndexDocument>> index;
+    std::unordered_map<std::string, std::vector<indexer_db::IndexDocument>> index;
     void splitContentUniqueTerms(const std::string& str, std::unordered_map<std::string, int> &terms, char delimiter);
     void removeWhitespace(std::string& str);
 public:

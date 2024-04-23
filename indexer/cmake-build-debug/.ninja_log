@@ -1,0 +1,4 @@
+# ninja log v5
+1	406	1713905660325889915	CMakeFiles/Indexer.dir/indexer/indexer.cpp.o	bb3072cc70aa630
+2	437	1713905660357513866	CMakeFiles/Indexer.dir/db/db.cpp.o	a60200f39d7249a5
+1	447	1713905660368283365	CMakeFiles/Indexer.dir/api/api.cpp.o	dc95ca2d1eb54d8a

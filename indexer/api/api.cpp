@@ -27,8 +27,7 @@ int main() {
 
         // index the document
         indexPtr->indexDocument(&indexingDocument);
-        indexPtr->printIndex();
-
+        
         res.status(200).send("Processing successfull");
     });
     
