@@ -6,15 +6,12 @@
 namespace indexer {
 
     Indexer::Indexer() {
-
+        totalDocuments=0;
     }
 
     void Indexer::indexDocument(Document* document) {
         std::unordered_map<std::string, int> terms;
         splitContentUniqueTerms(document->content, terms, ' ');
-
-        // Total number of documents (adjust as needed)
-        int documentCount = 3;
 
         // process each term extracted from the document
         for (const auto& pair : terms) {
@@ -27,9 +24,9 @@ namespace indexer {
             // calculate inverse document frequency (IDF)
             float idf=0.0f;
             if (this->index.find(term) != this->index.end()) {
-                idf = std::log(static_cast<float>(documentCount) / (this->index[term].size())); // IDF with Laplace smoothing
+                idf = std::log(static_cast<float>(this->totalDocuments) / (this->index[term].size())); // IDF with Laplace smoothing
             } else {
-                idf = std::log(static_cast<float>(documentCount) / 1); // Default IDF for new term
+                idf = std::log(static_cast<float>(this->totalDocuments) / 1); // Default IDF for new term
             }            
 
             IndexDocument indexDocument{ document->url, pair.second, tf, idf };
@@ -54,7 +51,7 @@ namespace indexer {
                 this->index[term].push_back(indexDocument);
             }
         }
-        printIndex();
+        this->totalDocuments++;
     }
 
 
