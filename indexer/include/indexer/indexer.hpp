@@ -15,7 +15,7 @@ struct Document {
 class Indexer
 {
 private:
-    indexer_db::indexer_db db;
+    indexer_db::IndexerDB db;
     int totalDocuments;
     std::unordered_map<std::string, std::vector<indexer_db::IndexDocument>> index;
     void splitContentUniqueTerms(const std::string& str, std::unordered_map<std::string, int> &terms, char delimiter);

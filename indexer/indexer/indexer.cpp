@@ -27,7 +27,11 @@ namespace indexer {
                 idf = std::log(static_cast<float>(this->totalDocuments) / (this->index[term].size())+1);
             } else {
                 idf = std::log(static_cast<float>(this->totalDocuments) / 1); // Default IDF for new term
-            }            
+            }       
+
+            if(idf==-INFINITY)  {
+                idf=0;
+            }   
 
             indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf };
             // Check if the term already exists in the index map
@@ -46,11 +50,11 @@ namespace indexer {
                 // if the url is not found for the term, add it to the index
                 if (!found) {
                     this->index[term].push_back(indexDocument);
-                    this->db.insertIndexDocument(indexDocument);
+                    this->db.insertIndexDocument(indexDocument, term);
                 }
             } else {
                 this->index[term].push_back(indexDocument);
-                this->db.insertIndexDocument(indexDocument);
+                this->db.insertIndexDocument(indexDocument, term);
             }
         }
         this->totalDocuments++;
