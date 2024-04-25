@@ -1,7 +1,6 @@
 #ifndef DB_HPP
 #define DB_HPP
 
-#include <sqlite3.h>
 #include <iostream>
 #include <string>
 
@@ -22,8 +21,6 @@ namespace indexer_db {
         void insertIndexDocument(const IndexDocument& document, std::string term);
 
     private:
-        sqlite3* db;
-         void createTables();
     };
 
 }
