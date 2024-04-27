@@ -11,6 +11,9 @@ namespace indexer_db {
         int termCount;
         float tf;
         float idf;
+        float tf_idf;
+        float docLength;
+        float avgDocLength;
     };
 
     class IndexerDB {

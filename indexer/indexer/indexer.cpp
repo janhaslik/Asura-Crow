@@ -33,7 +33,7 @@ namespace indexer {
                 idf=0;
             }   
 
-            indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf };
+            indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf, tf*idf, document->content.size(), };
             // Check if the term already exists in the index map
             if (this->index.find(term) != this->index.end()) {
                 bool found = false;
