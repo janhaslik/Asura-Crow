@@ -6,6 +6,7 @@
 namespace indexer {
 
     Indexer::Indexer() {
+        this->db=std::make_shared<indexer_db::IndexerDB>();
         totalDocuments=0;
     }
 
@@ -34,8 +35,9 @@ namespace indexer {
             }   
 
             indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf, tf*idf, static_cast<float>(document->content.size()),1.0f};
+            this->db.get()->insertIndexDocument(indexDocument, term);
             // Check if the term already exists in the index map
-            if (this->index.find(term) != this->index.end()) {
+            /*if (this->index.find(term) != this->index.end()) {
                 bool found = false;
 
                 // check if the current url already exists for this term
@@ -51,12 +53,13 @@ namespace indexer {
                 if (!found) {
                     this->index[term].push_back(indexDocument);
                     this->db.insertIndexDocument(indexDocument, term);
+                    //this->db.getTermDocuments(term);
                 }
             } else {
                 this->index[term].push_back(indexDocument);
                 this->db.insertIndexDocument(indexDocument, term);
-            }
-            this->db.getTermDocuments(term);
+                //this->db.getTermDocuments(term);
+            }*/
         }
         this->totalDocuments++;
     }

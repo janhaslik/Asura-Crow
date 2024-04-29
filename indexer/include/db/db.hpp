@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <memory>
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
@@ -29,7 +30,7 @@ namespace indexer_db {
         std::vector<IndexDocument> getTermDocuments(std::string term);
 
     private:
-        mongocxx::database db;
+        std::shared_ptr<mongocxx::client> client; // Using shared_ptr for managing the database pointer
     };
 
 }

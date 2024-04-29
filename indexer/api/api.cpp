@@ -8,31 +8,50 @@
 #include <memory>
 
 int main() {
+    // Initialize MongoDB indexer
+    std::shared_ptr<indexer::Indexer> indexPtr;
+    try {
+        indexPtr = std::make_shared<indexer::Indexer>();
+    } catch (const std::exception& e) {
+        std::cerr << "Error initializing MongoDB indexer: " << e.what() << std::endl;
+        return 1; // Return an error code if initialization fails
+    }
+
+    // Initialize Jet++ router and server
     jetpp::Router router;
-    std::shared_ptr<indexer::Indexer> indexPtr = std::make_shared<indexer::Indexer>();
+    router.post("/index", [&](jetpp::Request& req, jetpp::Response& res) {
+        try {
+            // Process incoming POST request to index a document
+            std::string document = req.body;
 
+            jetpp::JsonConverter jsonConverter;
+            jetpp::JsonValue doc = jsonConverter.stringToJson(document);
 
-    router.post("/index",[&](jetpp::Request &req, jetpp::Response &res) {
-        std::string document = req.body;
+            // Access 'url' and 'content' from the JSON document
+            std::string url = doc.asObject["url"].asString;
+            std::string content = doc.asObject["content"].asString;
 
-        jetpp::JsonConverter jsonConverter;
-        jetpp::JsonValue doc = jsonConverter.stringToJson(document);
+            // Create an indexing document
+            indexer::Document indexingDocument{url, content};
+            // Index the document
+            indexPtr->indexDocument(&indexingDocument);
 
-        // access 'url' and 'content' from the JSON document
-        std::string url = doc.asObject["url"].asString;
-        std::string content = doc.asObject["content"].asString;
-
-        // create an indexing document
-        indexer::Document indexingDocument{url, content};
-        // index the document
-        indexPtr->indexDocument(&indexingDocument);
-        
-        res.status(200).send("Processing successfull");
+            res.status(200).send("Processing successful");
+        } catch (const std::exception& e) {
+            std::cerr << "Error processing indexing request: " << e.what() << std::endl;
+            res.status(500).send("Internal Server Error");
+        }
     });
-    
-    // server, port: 7001
+
+    // Start Jet++ server on port 7001
     jetpp::Server server(router);
-    server.start(7001);
+    try {
+        server.start(7001);
+        std::cout << "Server started successfully on port 7001" << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error starting server: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }

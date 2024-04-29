@@ -11,8 +11,7 @@ IndexerDB::IndexerDB() {
     try {
         std::string uri = "mongodb://root:1234@localhost:27017/";
         mongocxx::instance instance{};
-        mongocxx::client client{mongocxx::uri(uri)};
-        this->db = client["AsuraCrow_DB"];
+        this->client = std::make_shared<mongocxx::client>(mongocxx::client{mongocxx::uri(uri)}); // Creating a shared_ptr for the database
 
         // Example data: term1 and term2 with associated documents
         std::unordered_map<std::string, std::vector<IndexDocument>> termDocuments;
@@ -53,39 +52,39 @@ IndexerDB::IndexerDB() {
                 insertIndexDocument(doc,term);
             }
         }
-        } catch (const std::exception& e) {
-            std::cerr << "Error connecting to MongoDB: " << e.what() << std::endl;
-        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error connecting to MongoDB: " << e.what() << std::endl;
     }
+}
+IndexerDB::~IndexerDB() {
+    std::cout << "destruct db" << std::endl;
+}
 
 
+void IndexerDB::insertIndexDocument(const IndexDocument& document, std::string term) {
+    // bson document of the index document of the website, prevents duplicate in the if-else block
+    bsoncxx::builder::stream::document doc_builder{};
+    doc_builder << "url" << document.url;
+    doc_builder << "tf" << document.tf;
+    doc_builder << "idf" << document.idf;
+    doc_builder << "tf-idf" << document.tf_idf;
+    doc_builder << "docLength" << document.docLength;
+    doc_builder << "avgDocLength" << document.avgDocLength;
 
-    IndexerDB::~IndexerDB() {
-    }
 
-    void IndexerDB::insertIndexDocument(const IndexDocument& document, std::string term) {
-        //bson document of the index document of website
-        bsoncxx::builder::stream::document doc_builder{};
-        doc_builder << "url" << document.url;
-        doc_builder << "tf" << document.tf;
-        doc_builder << "idf" << document.idf;
-        doc_builder << "tf-idf" << document.tf_idf;
-        doc_builder << "docLength" << document.docLength;
-        doc_builder << "avgDocLength" << document.avgDocLength;
-            
-        // Implement insertion logic here
-        auto indexDocuments=this->db.collection("index");
+    auto db=this->client.get()->database("AsuraCrow_DB");
+    auto indexDocuments = db.collection("index");
+    
+    //check if term already exists
+    auto filter = bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
+    auto termDoc = indexDocuments.find_one(filter.view());
 
-        auto filter=bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
+    if (termDoc) {
+        auto update = bsoncxx::builder::stream::document{} << "$push" << bsoncxx::builder::stream::open_document << "documents" << doc_builder << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize;
 
-        auto termDoc=indexDocuments.find_one(filter.view());
-
-        if(termDoc){
-            auto update=bsoncxx::builder::stream::document{} << "$push" << bsoncxx::builder::stream::open_document <<  "documents" << doc_builder << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize;
-
-            indexDocuments.update_one(filter.view(),update.view());
-
-        }else{
+        indexDocuments.update_one(filter.view(), update.view());
+    } else {
+        try{
             bsoncxx::builder::stream::array documents_array_builder;
             documents_array_builder << doc_builder;
 
@@ -97,36 +96,43 @@ IndexerDB::IndexerDB() {
             bsoncxx::document::value term_doc = term_doc_builder << bsoncxx::builder::stream::finalize;
 
             indexDocuments.insert_one(term_doc.view());
+        } catch (const std::exception& e) {
+            std::cerr << "Error inserting document into MongoDB: " << e.what() << std::endl;
         }
     }
+}
 
-    std::vector<IndexDocument> IndexerDB::getTermDocuments(std::string term) {
-        std::vector<IndexDocument> result;
-        try {
-            auto indexDocuments = this->db.collection("index");
 
-            auto filter = bsoncxx::builder::stream::document{} << "term" << term
-                                                               << bsoncxx::builder::stream::finalize;
-            mongocxx::options::find findOptions{};
-            findOptions.projection(bsoncxx::builder::stream::document{} << "documents" << "1"
-                                                                         << bsoncxx::builder::stream::finalize);
 
-            mongocxx::cursor documents = indexDocuments.find(filter.view(), findOptions);
+std::vector<IndexDocument> IndexerDB::getTermDocuments(std::string term) {
+    std::vector<IndexDocument> result;
+    try {
+        auto db=this->client.get()->database("AsuraCrow_DB");
+        auto indexDocuments = db.collection("index");
+        auto filter = bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
 
-            for (auto document : documents) {
+        // Retrieve documents matching the term from the database
+        mongocxx::cursor documents = indexDocuments.find(filter.view());
+
+        for (auto document : documents) {
+            // Validate the retrieved document before accessing its fields
+            if (document["url"] && document["tf"] && document["idf"] && document["tf-idf"] && document["docLength"] && document["avgDocLength"]) {
                 IndexDocument doc;
-                /*doc.url = document["url"].get_string().value.to_string();
+                doc.url = document["url"].get_string().value.to_string();
                 doc.tf = document["tf"].get_double().value;
                 doc.idf = document["idf"].get_double().value;
                 doc.tf_idf = document["tf-idf"].get_double().value;
                 doc.docLength = document["docLength"].get_int64().value;
-                doc.avgDocLength = document["avgDocLength"].get_int64().value;*/
+                doc.avgDocLength = document["avgDocLength"].get_int64().value;
                 result.push_back(doc);
+            } else {
+                std::cerr << "Error: Invalid document retrieved from MongoDB." << std::endl;
             }
-        } catch (const std::exception& e) {
-            std::cerr << "Error retrieving documents from MongoDB: " << e.what() << std::endl;
         }
-        return result;
+    } catch (const std::exception& e) {
+        std::cerr << "Error retrieving documents from MongoDB: " << e.what() << std::endl;
     }
+    return result;
+}
 
 }
