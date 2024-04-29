@@ -24,7 +24,6 @@ int main() {
 
         // create an indexing document
         indexer::Document indexingDocument{url, content};
-
         // index the document
         indexPtr->indexDocument(&indexingDocument);
         

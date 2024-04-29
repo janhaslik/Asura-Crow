@@ -2,7 +2,11 @@
 #define DB_HPP
 
 #include <iostream>
+#include <vector>
 #include <string>
+#include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/uri.hpp>
 
 namespace indexer_db {
 
@@ -22,8 +26,10 @@ namespace indexer_db {
         ~IndexerDB();
 
         void insertIndexDocument(const IndexDocument& document, std::string term);
+        std::vector<IndexDocument> getTermDocuments(std::string term);
 
     private:
+        mongocxx::database db;
     };
 
 }
