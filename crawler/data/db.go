@@ -13,7 +13,7 @@ import (
 	_ "go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var connectionString string = "mongodb://root:1234@localhost:27017"
+const connectionString string = "mongodb://root:1234@localhost:27017"
 
 type COLLECTION struct {
 	collection *mongo.Collection

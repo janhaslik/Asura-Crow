@@ -22,20 +22,8 @@ namespace indexer {
             // calculate term frequency (TF) for the current term in the document
             float tf = static_cast<float>(pair.second) / terms.size();
 
-            // calculate inverse document frequency (IDF)
-            float idf=0.0f;
-            if (this->index.find(term) != this->index.end()) {
-                idf = std::log(static_cast<float>(this->totalDocuments) / (this->index[term].size())+1);
-            } else {
-                idf = std::log(static_cast<float>(this->totalDocuments) / 1); // Default IDF for new term
-            }       
-
-            if(idf==-INFINITY)  {
-                idf=0;
-            }   
-
-            indexer_db::IndexDocument indexDocument{ document->url, pair.second, tf, idf, tf*idf, static_cast<float>(document->content.size()),1.0f};
-            this->db.get()->insertIndexDocument(indexDocument, term);
+            indexer_db::IndexDocument indexDocument{document->url, tf, static_cast<float>(document->content.size())};
+            this->db.get()->upsertIndexDocument(indexDocument, term);
             // Check if the term already exists in the index map
             /*if (this->index.find(term) != this->index.end()) {
                 bool found = false;
@@ -82,10 +70,7 @@ namespace indexer {
 
             for (const indexer_db::IndexDocument& doc : documents) {
                 std::cout << "  Document URL: " << doc.url << std::endl;
-                std::cout << "  Term count: " << doc.termCount << std::endl;
                 std::cout << "  TF: " << doc.tf << std::endl;
-                std::cout << "  IDF: " << doc.idf << std::endl;
-                std::cout << "  TF-IDF: " << doc.tf*doc.idf << std::endl;
             }
 
             std::cout << std::endl;

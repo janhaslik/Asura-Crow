@@ -13,12 +13,8 @@ namespace indexer_db {
 
     struct IndexDocument {
         std::string url;
-        int termCount;
         float tf;
-        float idf;
-        float tf_idf;
         float docLength;
-        float avgDocLength;
     };
 
     class IndexerDB {
@@ -26,11 +22,11 @@ namespace indexer_db {
         IndexerDB();
         ~IndexerDB();
 
-        void insertIndexDocument(const IndexDocument& document, std::string term);
+        void upsertIndexDocument(const IndexDocument& document, std::string term);
         std::vector<IndexDocument> getTermDocuments(std::string term);
 
     private:
-        std::shared_ptr<mongocxx::client> client; // Using shared_ptr for managing the database pointer
+        std::shared_ptr<mongocxx::client> client; // using shared_ptr for managing the database pointer
     };
 
 }
