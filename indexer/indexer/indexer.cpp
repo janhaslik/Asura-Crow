@@ -7,7 +7,6 @@ namespace indexer {
 
     Indexer::Indexer() {
         this->db=std::make_shared<indexer_db::IndexerDB>();
-        totalDocuments=0;
     }
 
     void Indexer::indexDocument(Document* document) {
@@ -21,9 +20,13 @@ namespace indexer {
 
             // calculate term frequency (TF) for the current term in the document
             float tf = static_cast<float>(pair.second) / terms.size();
-
-            indexer_db::IndexDocument indexDocument{document->url, tf, static_cast<float>(document->content.size())};
+             std::cout << "index document" << std::endl;
+            try{
+            indexer_db::IndexDocument indexDocument{document->url, tf, static_cast<int>(document->content.size())};
             this->db.get()->upsertIndexDocument(indexDocument, term);
+            }catch(std::exception& e){
+                std::cerr << "Error exec upserting: " << e.what() << std::endl;
+            }
             // Check if the term already exists in the index map
             /*if (this->index.find(term) != this->index.end()) {
                 bool found = false;
@@ -49,7 +52,6 @@ namespace indexer {
                 //this->db.getTermDocuments(term);
             }*/
         }
-        this->totalDocuments++;
     }
 
 

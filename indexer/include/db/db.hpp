@@ -14,7 +14,7 @@ namespace indexer_db {
     struct IndexDocument {
         std::string url;
         float tf;
-        float docLength;
+        int docLength;
     };
 
     class IndexerDB {
@@ -23,10 +23,10 @@ namespace indexer_db {
         ~IndexerDB();
 
         void upsertIndexDocument(const IndexDocument& document, std::string term);
-        std::vector<IndexDocument> getTermDocuments(std::string term);
-
     private:
         std::shared_ptr<mongocxx::client> client; // using shared_ptr for managing the database pointer
+        std::vector<IndexDocument> getTermDocuments(std::string term);
+
     };
 
 }

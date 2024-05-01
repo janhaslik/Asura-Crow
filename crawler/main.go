@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		return
 	}*/
-	websiteUrls := []string{"https://apple.com", "https://www.apple.com/at/", "https://mcshark.at"}
+	websiteUrls := []string{"https://amazon.de", "https://www.apple.com/at/", "https://mcshark.at"}
 	numWorkers := 100 //number of workers, prod: 100, test: 1
 	err := crawler.Crawl(websiteUrls, numWorkers)
 	if err != nil {
