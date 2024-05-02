@@ -12,8 +12,8 @@ namespace indexer_db {
     IndexerDB::IndexerDB() {
         try {
             const std::string uri = "mongodb://root:1234@localhost:27017/";
-            mongocxx::instance instance{};
-            this->client = std::make_shared<mongocxx::client>(mongocxx::client{mongocxx::uri(uri)}); // Creating a shared_ptr for the database
+             // creating a shared_ptr for the database
+            this->client = std::make_shared<mongocxx::client>(mongocxx::client{mongocxx::uri(uri)});
 
             std::unordered_map<std::string, std::vector<IndexDocument>> termDocuments;
             
