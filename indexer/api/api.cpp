@@ -20,8 +20,6 @@ int main() {
     // Initialize Jet++ router and server
     jetpp::Router router;
     router.post("/index", [&](jetpp::Request& req, jetpp::Response& res) {
-         std::cout << "processing req" << std::endl;
-
         try {
             // Process incoming POST request to index a document
             std::string document = req.body;
@@ -45,7 +43,7 @@ int main() {
         }
     });
 
-    // Start Jet++ server on port 7001
+    // start Jet++ server on port 7001
     jetpp::Server server(router);
     try {
         server.start(7001);

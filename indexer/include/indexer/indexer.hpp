@@ -24,7 +24,6 @@ private:
 public:
     Indexer();
     void indexDocument(Document *doc);
-    void printIndex();
 };
 
 }

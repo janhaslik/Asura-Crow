@@ -20,37 +20,13 @@ namespace indexer {
 
             // calculate term frequency (TF) for the current term in the document
             float tf = static_cast<float>(pair.second) / terms.size();
-             std::cout << "index document" << std::endl;
+
             try{
-            indexer_db::IndexDocument indexDocument{document->url, tf, static_cast<int>(document->content.size())};
-            this->db.get()->upsertIndexDocument(indexDocument, term);
+                indexer_db::IndexDocument indexDocument{document->url, tf, static_cast<int>(document->content.size())};
+                this->db.get()->upsertIndexDocument(indexDocument, term);
             }catch(std::exception& e){
                 std::cerr << "Error exec upserting: " << e.what() << std::endl;
             }
-            // Check if the term already exists in the index map
-            /*if (this->index.find(term) != this->index.end()) {
-                bool found = false;
-
-                // check if the current url already exists for this term
-                for (auto& doc : this->index[term]) {
-                    doc.idf = idf;
-                    if (doc.url == document->url) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                // if the url is not found for the term, add it to the index
-                if (!found) {
-                    this->index[term].push_back(indexDocument);
-                    this->db.insertIndexDocument(indexDocument, term);
-                    //this->db.getTermDocuments(term);
-                }
-            } else {
-                this->index[term].push_back(indexDocument);
-                this->db.insertIndexDocument(indexDocument, term);
-                //this->db.getTermDocuments(term);
-            }*/
         }
     }
 
@@ -60,22 +36,6 @@ namespace indexer {
         std::string segment;
         while (std::getline(isstream, segment, delimiter)) {
             terms[segment]++;
-        }
-    }
-
-    void Indexer::printIndex(){
-        for (const auto& entry : this->index) {
-            const std::string& term = entry.first;
-            const std::vector<indexer_db::IndexDocument>& documents = entry.second;
-            ///if (term != "apple")continue;
-            std::cout << "Term: " << term << std::endl;
-
-            for (const indexer_db::IndexDocument& doc : documents) {
-                std::cout << "  Document URL: " << doc.url << std::endl;
-                std::cout << "  TF: " << doc.tf << std::endl;
-            }
-
-            std::cout << std::endl;
         }
     }
 

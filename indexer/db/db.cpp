@@ -3,6 +3,7 @@
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/stream/array.hpp>
 #include <bsoncxx/json.hpp>
+#include <mongocxx/exception/exception.hpp>
 #include <mongocxx/bulk_write.hpp>
 #include <iostream>
 
@@ -10,7 +11,7 @@ namespace indexer_db {
 
     IndexerDB::IndexerDB() {
         try {
-            std::string uri = "mongodb://root:1234@localhost:27017/";
+            const std::string uri = "mongodb://root:1234@localhost:27017/";
             mongocxx::instance instance{};
             this->client = std::make_shared<mongocxx::client>(mongocxx::client{mongocxx::uri(uri)}); // Creating a shared_ptr for the database
 
@@ -18,7 +19,7 @@ namespace indexer_db {
             
             IndexDocument doc1;
             doc1.url = "document1_url";
-            doc1.tf = 0.5;
+            doc1.tf = 0.8;
             doc1.docLength = 100;
             
             IndexDocument doc2;
@@ -28,7 +29,7 @@ namespace indexer_db {
             
             termDocuments["term1"].push_back(doc1);
             termDocuments["term1"].push_back(doc2);
-            
+            doc1.tf=0.4;
             termDocuments["term2"].push_back(doc1);
             
             for (const auto& entry : termDocuments) {
@@ -50,29 +51,55 @@ namespace indexer_db {
 
 
    void IndexerDB::upsertIndexDocument(const IndexDocument& document, std::string term) {
-    try {
-        bsoncxx::builder::stream::document doc_builder{};
-        doc_builder << "url" << document.url
-                    << "tf" << document.tf
-                    << "docLength" << document.docLength;
+        try {
+            bsoncxx::builder::stream::document doc_builder{};
+            doc_builder << "url" << document.url
+                        << "tf" << document.tf
+                        << "docLength" << document.docLength;
 
-        auto db = this->client.get()->database("AsuraCrow_DB");
-        auto indexDocuments = db.collection("index");
+            auto db = this->client.get()->database("AsuraCrow_DB");
+            auto indexDocuments = db.collection("index");
 
-        auto filter = bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
+            auto documents=this->getTermDocuments(term);
 
-        // Use update_one with upsert option
-        auto update = bsoncxx::builder::stream::document{} << "$addToSet"
-                                                            << bsoncxx::builder::stream::open_document
-                                                            << "documents" << doc_builder
-                                                            << bsoncxx::builder::stream::close_document
-                                                            << bsoncxx::builder::stream::finalize;
+            //check for updating a document
+            bool found=false;
+            for(auto &d: documents){
+                if(d.url==document.url){
+                    d=document;
+                    found=true;
+                    break;
+                }
+            }
 
-        indexDocuments.update_one(filter.view(), update.view(), mongocxx::options::update().upsert(true));
-    } catch (const std::exception& e) {
-        std::cerr << "Error upserting document into MongoDB: " << e.what() << std::endl;
+            //if new, just push to documents
+            if(!found)documents.push_back(document);
+
+            bsoncxx::builder::stream::array arr_builder{};
+            for (const auto& d : documents) {
+                bsoncxx::builder::stream::document inner_doc_builder{};
+                inner_doc_builder << "url" << d.url
+                                << "tf" << d.tf
+                                << "docLength" << d.docLength;
+                arr_builder << inner_doc_builder;
+            }
+
+            auto filter = bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
+
+            // Use update_one with upsert option
+            auto update = bsoncxx::builder::stream::document{} << "$set"
+                                                                << bsoncxx::builder::stream::open_document
+                                                                << "documents" << arr_builder
+                                                                << bsoncxx::builder::stream::close_document
+                                                                << bsoncxx::builder::stream::finalize;
+
+            indexDocuments.update_one(filter.view(), update.view(), mongocxx::options::update().upsert(true));
+        } catch (const mongocxx::exception& e) {
+            std::cerr << "MongoDB Error upserting document: " << e.what() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Error upserting document into MongoDB: " << e.what() << std::endl;
+        }
     }
-}
 
 
 
@@ -87,7 +114,7 @@ namespace indexer_db {
             mongocxx::options::find findOpts{};
             findOpts.projection(bsoncxx::builder::basic::make_document(bsoncxx::builder::basic::kvp("documents", 1)));
 
-            // Retrieve one document matching the term from the database
+            // retrieve one index document matching the term from the database
             auto cursor = indexDocuments.find_one(filter.view(), findOpts);
 
             if (cursor) {
@@ -111,8 +138,6 @@ namespace indexer_db {
                         }
                     }
                 }
-            } else {
-                std::cerr << "Error: No document found for term '" << term << "'." << std::endl;
             }
         } catch (const std::exception& e) {
             std::cerr << "Error retrieving documents from MongoDB: " << e.what() << std::endl;
