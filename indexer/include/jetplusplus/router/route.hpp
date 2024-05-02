@@ -12,16 +12,16 @@ namespace jetpp
     class Route
     {
     public:
-        Route(std::string name, jetpp::Methods method, void (*callback)(Request &, Response &));
+        Route(const std::string routeurl, jetpp::Methods method, std::function<void(Request &, Response &)> callback);
 
-        std::string getName();
+        std::string getRouteurl();
         jetpp::Methods getMethod();
         void execute(Request &request, Response &response);
 
     private:
-        std::string name;
+        std::string routeurl;
         jetpp::Methods method;
-        void (*callback)(Request &, Response &);
+        std::function<void(Request &, Response &)> callback;
     };
 }
 

@@ -18,7 +18,6 @@ type document struct {
 }
 
 func Crawl(urls []string, numWorkers int) error {
-
 	if len(urls) == 0 {
 		return errors.New("no urls provided")
 	}
@@ -44,11 +43,12 @@ func Crawl(urls []string, numWorkers int) error {
 		go func() {
 			defer wg.Done()
 			for url := range urlChan {
+				fmt.Printf("Crawling %s\n", url)
 				err := fetch(url)
 
 				if err != nil {
 					errChan <- crawlErr{err, url, i}
-					return
+					//return
 				} else {
 					fmt.Printf("Successfully Crawled %s and sent document to indexer server, channel worker: %d\n", url, i)
 				}
@@ -64,7 +64,7 @@ func Crawl(urls []string, numWorkers int) error {
 	for channel := range errChan {
 		if channel.err != nil {
 			fmt.Printf("Error fetching url: %s, channel worker: %d, error: %s\n", channel.url, channel.worker, channel.err)
-			return channel.err
+			//return channel.err
 		}
 	}
 
@@ -112,9 +112,13 @@ func fetch(url string) error {
 			req.Header.Set("Content-Type", "text/plain")
 			req.Header.Set("Host", "localhost:7002")
 
-			client := &http.Client{}
+			fmt.Println("send request to indexer")
 
+			client := &http.Client{}
 			res, err := client.Do(req)
+
+			fmt.Println("responese from indexer")
+
 			if err != nil {
 				fmt.Errorf("Failed to request indexer server %s", err)
 				return err
@@ -155,7 +159,7 @@ func fetch(url string) error {
 
 // removes all blacklisted characters, and turns the content into lowercase
 func CleanContent(content string) string {
-	blacklist := map[string]bool{"and": true, ":": true, ".": true, ",": true, "'": true, "<": true, ">": true, "!": true, "\"": true}
+	blacklist := map[string]bool{"and": true, ";": true, ":": true, ".": true, "{": true, "}": true, "[": true, "]": true, "\\": true, "%": true, "$": true, ",": true, "'": true, "<": true, ">": true, "!": true, "\"": true, "with": true, "or": true, "-	": true}
 
 	words := strings.Split(content, " ")
 	var cleaned []string

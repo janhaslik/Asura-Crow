@@ -15,3 +15,5 @@
 */CMakeSettings.json
 */CMakeLists.txt.user
 */build/
+**/*.db
+**/mongo-cxx-driver
