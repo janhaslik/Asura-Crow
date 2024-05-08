@@ -31,7 +31,7 @@ int main() {
             try {
                 indexPtr = std::make_shared<indexer::Indexer>();
             }catch (const std::exception& e) {
-                std::cerr << "Error initializing MongoDB indexer: " << e.what() << std::endl;
+                std::cerr << "Error initializing indexer: " << e.what() << std::endl;
             }
 
             // create an indexing document
@@ -50,7 +50,6 @@ int main() {
     jetpp::Server server(router);
     try {
         server.start(7001);
-        std::cout << "Server started successfully on port 7001" << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error starting server: " << e.what() << std::endl;
         return 1;
