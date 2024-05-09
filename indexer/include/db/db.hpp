@@ -1,5 +1,5 @@
-#ifndef DB_HPP
-#define DB_HPP
+#ifndef INDEXERDB_HPP
+#define INDEXERDB_HPP
 
 #include <iostream>
 #include <vector>

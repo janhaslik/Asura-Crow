@@ -34,10 +34,6 @@ target_link_libraries(Indexer PRIVATE
     mongo::bsoncxx_shared
 )
 
-# Find and link SQLite3
-find_package(SQLite3 REQUIRED)
-target_link_libraries(Indexer PRIVATE SQLite::SQLite3)
-
 # Link additional libraries (assuming libJetPlusPlusLib.dylib)
 target_link_libraries(Indexer PRIVATE
     ${CMAKE_SOURCE_DIR}/lib/libJetPlusPlusLib.dylib

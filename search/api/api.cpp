@@ -3,6 +3,7 @@
 #include "jetplusplus/json/jsonConverter.hpp"
 #include "jetplusplus/json/value.hpp"
 #include <searcher/searcher.hpp>
+#include <mongocxx/instance.hpp>
 #include <memory>
 #include <iostream>
 #include <string>
@@ -11,6 +12,7 @@
 int main() {
 
     jetpp::Router router;
+    mongocxx::instance instance{};
     
     router.post("/search", [&](jetpp::Request& req, jetpp::Response& res) {
         try {
