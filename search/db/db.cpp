@@ -46,18 +46,19 @@ namespace searcher_db{
 
     int SearcherDB::getTotalNumberDocuments(){
         auto db=this->client.get()->database("AsuraCrow_DB");
-        auto indexDocuments=db.collection("index");
+        auto websiteDocuments=db.collection("websites");
 
         mongocxx::options::find options{};
         options.projection(bsoncxx::builder::basic::make_document(bsoncxx::builder::basic::kvp("_id", 1)));
 
-        auto cursor=indexDocuments.find({},options);
+        auto cursor=websiteDocuments.find({},options);
 
         int size=0;
 
         for(auto doc:cursor){
             size++;
         }
+        std::cout << size << std::endl;
         return size;
     }
 }

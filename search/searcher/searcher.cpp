@@ -65,7 +65,7 @@ namespace searcher{
     }
 
     float Searcher::calculateIDF_Score(int totalDocuments, int appearences){
-        return static_cast<float>(log(totalDocuments/appearences));
+        return static_cast<float>(1+log(totalDocuments/appearences));
     }
 
     float Searcher::calculateBM25_Score(int doc_length, int avg_doc_length, float idf, float tf, float k1, float b){
