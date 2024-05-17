@@ -18,17 +18,23 @@ namespace searcher_db{
         auto db=this->client.get()->database("AsuraCrow_DB");
         auto indexDocuments=db.collection("index");
 
+        std::vector<IndexDocument> result;
+
         auto filter = bsoncxx::builder::stream::document{} << "term" << term << bsoncxx::builder::stream::finalize;
 
-        // Define projection option
+
         mongocxx::options::find findOpts{};
         findOpts.projection(bsoncxx::builder::basic::make_document(bsoncxx::builder::basic::kvp("documents", 1)));
         auto cursor = indexDocuments.find_one(filter.view(), findOpts);
 
+        // no match found for the term, return empty vector
+        if (!cursor) {
+            return result;
+        }
+
         auto termDoc= *cursor;
         auto documents_array = termDoc["documents"].get_array().value;
 
-        std::vector<IndexDocument> result;
         for(const auto& docVal: documents_array){
             auto doc = docVal.get_document().value;
             if (doc.find("url") != doc.end() && doc.find("tf") != doc.end() && doc.find("docLength") != doc.end()) {
