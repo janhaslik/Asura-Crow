@@ -38,7 +38,7 @@ namespace searcher{
  
                 this->rank[doc.url].td_idf+=td_idf;
                 this->rank[doc.url].bm25+=bm25;
-                this->rank[doc.url].totalScore=combineScores(this->rank[doc.url].td_idf, this->rank[doc.url].bm25);
+                this->rank[doc.url].totalScore+=combineScores(this->rank[doc.url].td_idf, this->rank[doc.url].bm25);
             }
         }
 
@@ -50,7 +50,6 @@ namespace searcher{
         int counter=0;
         for(const auto& it: sorted_documents){
             if(counter>25)break;
-            std::cout << it.first << " " << it.second.totalScore << " " << it.second.td_idf << " " << it.second.bm25 << " " << std::endl;
             resultUrls.push_back(it.first);
         }
         return resultUrls;
