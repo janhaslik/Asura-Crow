@@ -1,6 +1,8 @@
 from golang:1.22
 
-workdir /
+workdir /app
+
+run cd /app
 
 copy go.mod go.sum ./
 
