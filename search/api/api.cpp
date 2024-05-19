@@ -50,7 +50,7 @@ int main() {
     // start jet++ server on port 7001
     jetpp::Server server(router);
     try {
-        server.start(7001);
+        server.start(7002);
     } catch (const std::exception& e) {
         std::cerr << "Error starting server: " << e.what() << std::endl;
         return 1;
