@@ -2,7 +2,7 @@
 #define SEARCHER_HPP
 #include <string>
 #include <vector>
-#include <db/search_db.hpp>
+#include <db/searchdb.hpp>
 #include <algorithm>
 
 namespace searcher{

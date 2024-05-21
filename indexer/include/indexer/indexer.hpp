@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "db/db.hpp"
+#include "db/indexdb.hpp"
 
 namespace indexer {
 
