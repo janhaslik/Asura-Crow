@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C++ CI Searcher/Indexer
 
 on:
   push:
@@ -19,37 +19,45 @@ jobs:
       run: mkdir -p search/build
 
     - name: Configure in search/build
-      working-directory: ./search/build
-      run: ../configure
-
+      run: |
+        cd search/build
+        cmake ..
+      
     - name: Make in search/build
-      working-directory: ./search/build
-      run: make
+      run: |
+        cd search/build
+        make
 
     - name: Make check in search/build
-      working-directory: ./search/build
-      run: make check
+      run: |
+        cd search/build
+        make check
 
     - name: Make distcheck in search/build
-      working-directory: ./search/build
-      run: make distcheck
+      run: |
+        cd search/build
+        make distcheck
 
     # Ensure directories exist and run build commands in /indexer/build directory
     - name: Create indexer/build directory
       run: mkdir -p indexer/build
 
     - name: Configure in indexer/build
-      working-directory: ./indexer/build
-      run: ../configure
+      run: |
+        cd indexer/build
+        cmake ..
 
     - name: Make in indexer/build
-      working-directory: ./indexer/build
-      run: make
+      run: |
+        cd indexer/build
+        make
 
     - name: Make check in indexer/build
-      working-directory: ./indexer/build
-      run: make check
+      run: |
+        cd indexer/build
+        make check
 
     - name: Make distcheck in indexer/build
-      working-directory: ./indexer/build
-      run: make distcheck
+      run: |
+        cd indexer/build
+        make distcheck
