@@ -14,10 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Install mongo-cxx-driver using apt
-    - name: Install mongo-cxx-driver
-      run: sudo apt-get install -y libmongocxx-dev
-
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
       run: |
