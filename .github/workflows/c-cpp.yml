@@ -14,30 +14,42 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Build in /search/build directory
+    # Ensure directories exist and run build commands in /search/build directory
+    - name: Create search/build directory
+      run: mkdir -p search/build
+
     - name: Configure in search/build
-      working-directory: search/build
-      run: ./configure
+      working-directory: ./search/build
+      run: ../configure
+
     - name: Make in search/build
-      working-directory: search/build
+      working-directory: ./search/build
       run: make
+
     - name: Make check in search/build
-      working-directory: search/build
+      working-directory: ./search/build
       run: make check
+
     - name: Make distcheck in search/build
-      working-directory: search/build
+      working-directory: ./search/build
       run: make distcheck
 
-    # Build in /indexer/build directory
+    # Ensure directories exist and run build commands in /indexer/build directory
+    - name: Create indexer/build directory
+      run: mkdir -p indexer/build
+
     - name: Configure in indexer/build
-      working-directory: indexer/build
-      run: ./configure
+      working-directory: ./indexer/build
+      run: ../configure
+
     - name: Make in indexer/build
-      working-directory: indexer/build
+      working-directory: ./indexer/build
       run: make
+
     - name: Make check in indexer/build
-      working-directory: indexer/build
+      working-directory: ./indexer/build
       run: make check
+
     - name: Make distcheck in indexer/build
-      working-directory: indexer/build
+      working-directory: ./indexer/build
       run: make distcheck
