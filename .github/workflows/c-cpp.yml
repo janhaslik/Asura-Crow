@@ -16,11 +16,11 @@ jobs:
 
     # Clone mongo-cxx-driver repository into /search/mongo-cxx-driver directory
     - name: Clone mongo-cxx-driver repository for Search
-      run: git clone --branch release/v3.10 https://github.com/mongodb/mongo-cxx-driver.git search/mongo-cxx-driver
+      run: git clone --branch releases/v3.10 https://github.com/mongodb/mongo-cxx-driver.git search/mongo-cxx-driver
 
     # Clone mongo-cxx-driver repository into /indexer/mongo-cxx-driver directory
     - name: Clone mongo-cxx-driver repository for Indexer
-      run: git clone --branch release/v3.10 https://github.com/mongodb/mongo-cxx-driver.git indexer/mongo-cxx-driver
+      run: git clone --branch releases/v3.10 https://github.com/mongodb/mongo-cxx-driver.git indexer/mongo-cxx-driver
 
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
