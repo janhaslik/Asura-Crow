@@ -10,6 +10,7 @@ set(MONGOCXX_DIR "${CMAKE_SOURCE_DIR}/mongo-cxx-driver")
 set(LIBMONGOCXX_INCLUDE_DIRS "${MONGOCXX_DIR}/src/mongocxx/include")
 set(LIBBSONCXX_INCLUDE_DIRS "${MONGOCXX_DIR}/src/bsoncxx/include")
 
+list(APPEND CMAKE_PREFIX_PATH "${MONGOCXX_DIR}/buildcmake")
 
 add_executable(Search api/api.cpp searcher/searcher.cpp db/db.cpp)
 
@@ -31,6 +32,3 @@ target_link_libraries(Search PRIVATE
 
 # Specify the relative path to your library without -l flag
 target_link_libraries(Search PRIVATE ${CMAKE_SOURCE_DIR}/lib/libJetPlusPlusLib.dylib)
-
-# Add the buildcmake directory to CMAKE_PREFIX_PATH
-list(APPEND CMAKE_PREFIX_PATH "${MONGOCXX_DIR}/buildcmake")
