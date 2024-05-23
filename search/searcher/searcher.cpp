@@ -7,7 +7,11 @@
 
 namespace searcher{
 
-    // Constructor to initialize the Searcher class and establish a connection to the database
+    /**
+     * @brief Default constructor for the Searcher class.
+     * 
+     * Initializes the database connection using a shared pointer to IndexerDB.
+     */
     Searcher::Searcher(){
         this->db = std::make_shared<searcher_db::SearcherDB>();
     }
