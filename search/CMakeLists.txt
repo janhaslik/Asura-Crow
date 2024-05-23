@@ -31,3 +31,6 @@ target_link_libraries(Search PRIVATE
 
 # Specify the relative path to your library without -l flag
 target_link_libraries(Search PRIVATE ${CMAKE_SOURCE_DIR}/lib/libJetPlusPlusLib.dylib)
+
+# Add the buildcmake directory to CMAKE_PREFIX_PATH
+list(APPEND CMAKE_PREFIX_PATH "${MONGOCXX_DIR}/buildcmake")
