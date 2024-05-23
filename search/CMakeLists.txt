@@ -6,6 +6,14 @@ set(CMAKE_CXX_STANDARD 17)
 # Set the path to the mongo-cxx-driver source directory
 set(MONGOCXX_DIR "${CMAKE_SOURCE_DIR}/mongo-cxx-driver")
 
+message(${mongocxx_DIR})
+
+
+set(mongocxx_DIR "${CMAKE_PREFIX_PATH}/mongocxx/share/cmake/mongocxx")
+
+message(${mongocxx_DIR})
+
+
 # Specify the path to the mongocxx and bsoncxx include directories
 set(LIBMONGOCXX_INCLUDE_DIRS "${MONGOCXX_DIR}/src/mongocxx/include")
 set(LIBBSONCXX_INCLUDE_DIRS "${MONGOCXX_DIR}/src/bsoncxx/include")
