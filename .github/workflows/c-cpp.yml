@@ -29,6 +29,7 @@ jobs:
         cd search/mongo-cxx-driver/buildcmake
         cmake ..
         make
+        make install
         echo "{working-directory}"
     
     # Build mongo-cxx-driver for Indexer
