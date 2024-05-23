@@ -30,7 +30,7 @@ jobs:
         cmake ..
         make
         make install
-        echo "{working-directory}"
+        pwd
     
     # Build mongo-cxx-driver for Indexer
     #- name: Build mongo-cxx-driver for Indexer
@@ -44,20 +44,20 @@ jobs:
     - name: Create search/build directory
       run: |
         mkdir -p search/build
-        echo "{working-directory}"
+        pwd
       
 
     - name: Configure in search/build
       run: |
         cd search/build
         cmake ..
-        echo "{working-directory}"
+        pwd
 
     - name: Make in search/build
       run: |
         cd search/build
         make
-        echo "{working-directory}"
+        pwd
 
     - name: Make check in search/build
       run: |
