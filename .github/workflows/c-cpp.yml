@@ -29,14 +29,15 @@ jobs:
         cd search/mongo-cxx-driver/buildcmake
         cmake ..
         make
-
+        echo "{working-directory}"
+    
     # Build mongo-cxx-driver for Indexer
-    - name: Build mongo-cxx-driver for Indexer
-      run: |
-        mkdir -p indexer/mongo-cxx-driver/buildcmake
-        cd indexer/mongo-cxx-driver/buildcmake
-        cmake ..
-        make
+    #- name: Build mongo-cxx-driver for Indexer
+     # run: |
+      #  mkdir -p indexer/mongo-cxx-driver/buildcmake
+       # cd indexer/mongo-cxx-driver/buildcmake
+        #cmake ..
+        #make
         
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
