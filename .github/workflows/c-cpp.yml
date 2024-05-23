@@ -41,17 +41,22 @@ jobs:
         
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
-      run: mkdir -p search/build
+      run: |
+        mkdir -p search/build
+        echo "{working-directory}"
+      
 
     - name: Configure in search/build
       run: |
         cd search/build
         cmake ..
+        echo "{working-directory}"
 
     - name: Make in search/build
       run: |
         cd search/build
         make
+        echo "{working-directory}"
 
     - name: Make check in search/build
       run: |
