@@ -26,11 +26,12 @@ jobs:
     - name: Build mongo-cxx-driver for Search
       run: |
         mkdir -p search/mongo-cxx-driver/buildcmake
+        pwd
         cd search/mongo-cxx-driver/buildcmake
+        pwd
         cmake ..
         make
         make install
-        pwd
     
     # Build mongo-cxx-driver for Indexer
     #- name: Build mongo-cxx-driver for Indexer
@@ -50,12 +51,14 @@ jobs:
     - name: Configure in search/build
       run: |
         cd search/build
+        pwd
         cmake ..
         pwd
 
     - name: Make in search/build
       run: |
         cd search/build
+        pwd
         make
         pwd
 
