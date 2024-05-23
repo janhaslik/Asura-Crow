@@ -34,7 +34,7 @@ jobs:
         make install
         
     - name: Set CMAKE_PREFIX_PATH for mongocxx and bsoncxx
-      run: export CMAKE_PREFIX_PATH=/Asura-Crow/search/mongo-cxx-driver/buildmake/src/mongocxx:/Asura-Crow/search/mongo-cxx-driver/buildmake/src/bsoncxx:$CMAKE_PREFIX_PATH
+      run: export CMAKE_PREFIX_PATH=mongo-cxx-driver/buildmake:$CMAKE_PREFIX_PATH
 
 
     # Build mongo-cxx-driver for Indexer
