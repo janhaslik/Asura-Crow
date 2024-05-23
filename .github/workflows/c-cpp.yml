@@ -14,6 +14,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Clone mongo-cxx-driver repository into /search/mongo-cxx-driver directory
+    - name: Clone mongo-cxx-driver repository for Search
+      run: git clone https://github.com/mongodb/mongo-cxx-driver.git search/mongo-cxx-driver
+
+    # Clone mongo-cxx-driver repository into /indexer/mongo-cxx-driver directory
+    - name: Clone mongo-cxx-driver repository for Indexer
+      run: git clone https://github.com/mongodb/mongo-cxx-driver.git indexer/mongo-cxx-driver
+
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
       run: mkdir -p search/build
@@ -22,7 +30,7 @@ jobs:
       run: |
         cd search/build
         cmake ..
-      
+
     - name: Make in search/build
       run: |
         cd search/build
