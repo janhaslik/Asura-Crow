@@ -1,0 +1,43 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Build in /search/build directory
+    - name: Configure in search/build
+      working-directory: ./search/build
+      run: ./configure
+    - name: Make in search/build
+      working-directory: ./search/build
+      run: make
+    - name: Make check in search/build
+      working-directory: ./search/build
+      run: make check
+    - name: Make distcheck in search/build
+      working-directory: ./search/build
+      run: make distcheck
+
+    # Build in /indexer/build directory
+    - name: Configure in indexer/build
+      working-directory: ./indexer/build
+      run: ./configure
+    - name: Make in indexer/build
+      working-directory: ./indexer/build
+      run: make
+    - name: Make check in indexer/build
+      working-directory: ./indexer/build
+      run: make check
+    - name: Make distcheck in indexer/build
+      working-directory: ./indexer/build
+      run: make distcheck
