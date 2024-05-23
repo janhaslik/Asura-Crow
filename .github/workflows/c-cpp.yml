@@ -14,57 +14,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Clone mongo-cxx-driver repository into /search/mongo-cxx-driver directory
-    - name: Clone mongo-cxx-driver repository for Search
-      run: git clone --branch releases/v3.10 https://github.com/mongodb/mongo-cxx-driver.git search/mongo-cxx-driver
+    # Install mongo-cxx-driver using apt
+    - name: Install mongo-cxx-driver
+      run: sudo apt-get install -y libmongocxx-dev
 
-    # Clone mongo-cxx-driver repository into /indexer/mongo-cxx-driver directory
-    - name: Clone mongo-cxx-driver repository for Indexer
-      run: git clone --branch releases/v3.10 https://github.com/mongodb/mongo-cxx-driver.git indexer/mongo-cxx-driver
-
-     # Build mongo-cxx-driver for Search
-    - name: Build mongo-cxx-driver for Search
-      run: |
-        mkdir -p search/mongo-cxx-driver/buildcmake
-        pwd
-        cd search/mongo-cxx-driver/buildcmake
-        pwd
-        cmake ..
-        make
-        make install
-        
-    - name: Set CMAKE_PREFIX_PATH for mongocxx and bsoncxx
-      run: export CMAKE_PREFIX_PATH=mongo-cxx-driver/buildmake
-
-
-    # Build mongo-cxx-driver for Indexer
-    #- name: Build mongo-cxx-driver for Indexer
-     # run: |
-      #  mkdir -p indexer/mongo-cxx-driver/buildcmake
-       # cd indexer/mongo-cxx-driver/buildcmake
-        #cmake ..
-        #make
-        
     # Ensure directories exist and run build commands in /search/build directory
     - name: Create search/build directory
       run: |
         mkdir -p search/build
-        pwd
-      
-
-    - name: Configure in search/build
-      run: |
         cd search/build
-        pwd
         cmake ..
-        pwd
-
+      
     - name: Make in search/build
       run: |
         cd search/build
-        pwd
         make
-        pwd
 
     - name: Make check in search/build
       run: |
