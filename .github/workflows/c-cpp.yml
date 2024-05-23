@@ -34,7 +34,7 @@ jobs:
         make install
         
     - name: Set CMAKE_PREFIX_PATH for mongocxx and bsoncxx
-      run: export CMAKE_PREFIX_PATH=mongo-cxx-driver/buildmake:$CMAKE_PREFIX_PATH
+      run: export CMAKE_PREFIX_PATH=mongo-cxx-driver/buildmake
 
 
     # Build mongo-cxx-driver for Indexer
