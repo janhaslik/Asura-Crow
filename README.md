@@ -1,8 +1,8 @@
-# Asura Crow: Google Search Engine Clone
+# Asura Crow: Search Engine
 
 Author: [Jan Haslik](https://github.com/janhaslik)
 
-Asura Crow is a project aimed at replicating the functionality of a basic search engine similar to Google. It involves crawling, indexing, and searching functionalities implemented using C++, Go, and MongoDB. Various algorithms such as TF-IDF and BM25 are applied to enhance the search results. Additionally, a responsive web application is constructed using React.js to provide a user-friendly interface for searching.
+Asura Crow is a project aimed at replicating the functionality of a basic search engine. It involves crawling, indexing, and searching functionalities implemented using C++, Go, and MongoDB. Various algorithms such as TF-IDF and BM25 are applied to enhance the search results. 
 
 ## Components
 
@@ -14,7 +14,3 @@ Asura Crow is a project aimed at replicating the functionality of a basic search
 
 #### Searcher
 - **Description**: Accesses the MongoDB database and delivers relevant information to the query using various algorithms like TF-IDF and BM25.
-
-#### API
-- **Description**: Fetches data from the Searcher API and provides an interface for interacting with the different components of the search engine. Additionally, it serves the React frontend as a Single Page Application (SPA).
-
