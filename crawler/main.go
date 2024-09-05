@@ -13,7 +13,7 @@ import (
  */
 func main() {
 	// Create a ticker to trigger the crawling process every 5 minutes
-	ticker := time.NewTicker(time.Minute * 5)
+	ticker := time.NewTicker(time.Second * 5)
 	defer ticker.Stop()
 
 	var wg sync.WaitGroup

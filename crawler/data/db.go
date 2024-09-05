@@ -78,3 +78,18 @@ func (collection *COLLECTION) GetWebsiteUrls() ([]string, error) {
 
 	return websitesUrls, nil
 }
+
+func (collection *COLLECTION) InsertUrl(url string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	doc := bson.D{{Key: "url", Value: url}}
+
+	_, err := collection.collection.InsertOne(ctx, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
