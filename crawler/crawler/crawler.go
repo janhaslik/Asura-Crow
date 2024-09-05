@@ -18,7 +18,6 @@ type document struct {
 	Content string `json:"content"`
 }
 
-// Create a global map to track visited URLs and a mutex to ensure thread-safe access
 var visitedUrls = make(map[string]bool)
 var mu sync.Mutex
 
@@ -37,7 +36,7 @@ func Crawl(urls []string, numWorkers int) error {
 	urlChan := make(chan string, len(urls)) // Channel for URLs to process
 	errChan := make(chan error, numWorkers) // Channel for errors
 
-	// Fill the channel with initial URLs
+	// Initial URLs
 	for _, u := range urls {
 		urlChan <- u
 	}
@@ -61,7 +60,6 @@ func Crawl(urls []string, numWorkers int) error {
 		}(i)
 	}
 
-	// Close the error channel after all workers are done
 	go func() {
 		wg.Wait()
 		close(errChan)
@@ -93,7 +91,7 @@ func fetch(url string, urlChan chan<- string) error {
 		fmt.Printf("Skipping already visited URL: %s\n", url)
 		return nil
 	}
-	visitedUrls[url] = true // Mark URL as visited
+	visitedUrls[url] = true // Url is visited
 	mu.Unlock()
 
 	res, err := http.Get(url)
@@ -115,7 +113,7 @@ func fetch(url string, urlChan chan<- string) error {
 			content = ExtractStrings(content)
 			content = CleanContent(content)
 
-			// Create a document object to send to the indexer server
+			// Document object to send to the indexer server
 			doc := document{
 				Url:     url,
 				Content: content,

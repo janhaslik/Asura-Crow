@@ -12,12 +12,12 @@ import (
  * @brief Main function of the Asura Crow crawler to connect to the database and start the web crawling process every 5 minutes.
  */
 func main() {
-	// Create a ticker to trigger the crawling process every 5 minutes
+	// Ticker to trigger the crawling process every 5 minutes
 	ticker := time.NewTicker(time.Second * 5)
 	defer ticker.Stop()
 
 	var wg sync.WaitGroup
-	wg.Add(1) // Add a dummy entry to the wait group to prevent main from exiting
+	wg.Add(1) // Dummy entry to the wait group to prevent main from exiting
 
 	// Goroutine to perform crawling at regular intervals
 	go func() {
@@ -42,7 +42,7 @@ func performCrawling() {
 		return
 	}
 
-	// Retrieve website URLs from the database
+	// Get website URLs from the database
 	websiteUrls, err := conn.GetWebsiteUrls()
 	if err != nil {
 		fmt.Println("Error retrieving website URLs:", err)
